@@ -1,0 +1,7 @@
+
+        [ckan.plugins]
+        qualityreports=ckanext.qualityreports.plugin:qualityreportsPlugin
+
+        [babel.extractors]
+        ckan = ckan.lib.extract:extract_ckan
+    
