@@ -14,7 +14,7 @@
  * num_resources - the number of resources that the dataset has.
  *
  */
-ckan.module('example_theme_popover', function ($) {
+ckan.module('qualityreports_popover', function ($) {
   return {
     initialize: function () {
 
@@ -41,12 +41,12 @@ ckan.module('example_theme_popover', function ($) {
       // Subscribe to 'dataset_popover_clicked' events.
       // Whenever any line of code publishes an event with this topic,
       // our _onPopoverClicked function will be called.
-      this.sandbox.subscribe('dataset_popover_clicked',
+      this.sandbox.subscribe('qualityreports_popover_clicked',
                              this._onPopoverClicked);
     },
 
     teardown: function() {
-      this.sandbox.unsubscribe('dataset_popover_clicked',
+      this.sandbox.unsubscribe('qualityreports_popover_clicked',
                                this._onPopoverClicked);
     },
 
@@ -59,7 +59,7 @@ ckan.module('example_theme_popover', function ($) {
         // We wrap this in an if statement because we only want to request
         // the snippet from CKAN once, not every time the button is clicked.
         if (!this._snippetReceived) {
-            this.sandbox.client.getTemplate('example_theme_popover.html',
+            this.sandbox.client.getTemplate('qualityreports_popover.html',
                                             this.options,
                                             this._onReceiveSnippet,
                                             this._onReceiveSnippetError);
@@ -69,7 +69,7 @@ ckan.module('example_theme_popover', function ($) {
         // Publish a 'dataset_popover_clicked' event for other interested
         // JavaScript modules to receive. Pass the button that was clicked as a
         // parameter to the receiver functions.
-        this.sandbox.publish('dataset_popover_clicked', this.el);
+        this.sandbox.publish('qualityreports_popover_clicked', this.el);
         console.log(this.sandbox.jQuery);
     },
 

@@ -6,8 +6,8 @@
   {# Use Fanstatic to include our custom JavaScript module.
      A <script> tag for the module will be inserted in the right place at the
      bottom of the page. #}
-  {% resource 'qualityreports/example_theme_popover.js' %}
-  {% resource 'qualityreports/example_theme_popover.css' %}
+  {% resource 'qualityreports/qualityreports_popover.js' %}
+  {% resource 'qualityreports/qualityreports_popover.css' %}
 
   {# Apply our JavaScript module to an HTML element. The data-module attribute,
      which can be applied to any HTML element, tells CKAN to initialize an
@@ -16,12 +16,13 @@
      element as its this.el object. #}
 
 
-  <button data-module="example_theme_popover"
+  <button data-module="qualityreports_popover"
           data-module-id="{{ pkg.id }}"
           data-module-title="{{ pkg.title }}"
           data-module-license_title="{{ pkg.license_title }}"
           data-module-extras="{{ pkg.extras }}">
     <i class="fa fa-info-circle"></i>
+    Quality
   </button>
   <div style="height: 1em;" />
 {% endblock %}

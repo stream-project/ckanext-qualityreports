@@ -1,0 +1,79 @@
+{# The contents for a dataset popover.
+
+   id - the id of the dataset
+   num_resources - the dataset's number of resources
+   license_title - the dataset's license title
+
+#}
+<div class="context-info">
+  <div class="nums">
+    <h5>
+      WORK IN PROGRESS<br>
+      Data quality - reports
+    </h5>
+    <span style="word-break: keep-all;">
+      The following link will open a new tab in which all reports regarding this dataset are displayed.
+      If there is no report yet or just old onces, please start the report creation.
+      Please be aware that that coud take some minutes to finish.
+    </span>
+    <br>
+    <a href="" id="qualityreports_link" target="_blank" rel="noopener noreferrer">Open reports in new tab</a>
+    <br>
+    <br>
+    <button id="qualityreports_start"
+      onclick="startExecution()" >
+      Generate Report
+    </button>
+  </div>
+
+  <div class="clearfix"></div>
+
+</div>
+<script>
+// Get and clean the package data
+let pgk = '{{ extras }}'.replaceAll("&#39;", "\"")
+  .replaceAll("u\"", "\"")
+  .replaceAll("None,", "null,")
+  .replaceAll("True,", "true,")
+  .replaceAll("False,", "false,");
+console.log(pgk);
+console.log(JSON.parse(pgk));
+
+// prepare the extra information
+var extras = JSON.parse(pgk);
+let nomad_id = "dummy";
+extras.forEach((e) => {
+  if (e.key === "Website") {
+    var splits = e.value.split("/");
+    nomad_id = splits[splits.length-2] + "/" + splits[splits.length-1];
+  }
+  });
+console.log(nomad_id);
+
+// create the request for the status
+$("#qualityreports_link").attr("href", "http://localhost:82/"+nomad_id);
+
+
+/////////////////
+// creating the request for starting the execution
+function startExecution() {
+  $("#qualityreports_start").prop('disabled', true);
+
+  var xhr2 = new XMLHttpRequest();
+  xhr2.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      console.log(this.responseText);
+      //$("#qualityreports_start").prop('disabled', false);
+      alert(this.responseText);
+    }
+    else
+      console.log(this);
+  };
+  // curl http://localhost:81/hooks/Run_RDFUnit\?id\=test -v -H "Authorization: secret" -d "id=shacl"
+  xhr2.open("POST", "http://localhost:81/hooks/Run_RDFUnit", true);
+  xhr2.setRequestHeader("Authorization", "secret");
+  xhr2.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  xhr2.send("id="+nomad_id);
+}
+
+</script>
