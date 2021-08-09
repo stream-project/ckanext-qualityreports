@@ -51,8 +51,19 @@ extras.forEach((e) => {
 console.log(nomad_id);
 
 // create the request for the status
-$("#qualityreports_link").attr("href", "http://localhost:82/"+nomad_id);
+$("#qualityreports_link").attr("href", getServiceURL(true)+"/"+nomad_id);
 
+function getServiceURL(isJekyll = false) {
+  let port = "";
+  let prefix = "reports.";
+  if (location.host === "localhost") {
+    port = ":81";
+    if (isJekyll)
+      port = ":82";
+    prefix = "";
+  }
+  return location.protocol+"//"+prefix+location.host+port;
+}
 
 /////////////////
 // creating the request for starting the execution
@@ -70,7 +81,7 @@ function startExecution() {
       console.log(this);
   };
   // curl http://localhost:81/hooks/Run_RDFUnit\?id\=test -v -H "Authorization: secret" -d "id=shacl"
-  xhr2.open("POST", "http://localhost:81/hooks/Run_RDFUnit", true);
+  xhr2.open("POST", getServiceURL()+"/hooks/Run_RDFUnit", true);
   xhr2.setRequestHeader("Authorization", "secret");
   xhr2.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
   xhr2.send("id="+nomad_id);
