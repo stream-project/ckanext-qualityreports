@@ -6,8 +6,6 @@
   {# Use Fanstatic to include our custom JavaScript module.
      A <script> tag for the module will be inserted in the right place at the
      bottom of the page. #}
-  {% resource 'qualityreports/qualityreports_popover.js' %}
-  {% resource 'qualityreports/qualityreports_popover.css' %}
 
   {# Apply our JavaScript module to an HTML element. The data-module attribute,
      which can be applied to any HTML element, tells CKAN to initialize an
@@ -16,13 +14,96 @@
      element as its this.el object. #}
 
 
-  <button data-module="qualityreports_popover"
-          data-module-id="{{ pkg.id }}"
-          data-module-title="{{ pkg.title }}"
-          data-module-license_title="{{ pkg.license_title }}"
-          data-module-extras="{{ pkg.extras }}">
-    <i class="fa fa-info-circle"></i>
-    Quality
-  </button>
+  <section>
+          <h3>WORK IN PROGRESS<br>Data Quality</h3>
+          <span style="word-break: keep-all;">
+              The following link will open a new tab in which all reports regarding this dataset are displayed.
+              If there is no report yet or just old onces, please start the report creation.
+              Please be aware that that coud take some minutes to finish.
+          </span>
+          <table class="table table-striped table-bordered table-condensed">
+            <thead>
+              <tr>
+                <th scope="col">Field</th>
+                <th scope="col">Value</th>
+              </tr>
+            </thead>
+            <tbody>
+                  <tr>
+                    <th scope="row" class="dataset-label">Link to report</th>
+                      <td class="dataset-details"><a href="" id="qualityreports_link" target="_blank" rel="noopener noreferrer">Open reports in new tab</a></td>
+                  </tr>
+                  <tr>
+                    <th scope="row" class="dataset-label">Report creation</th>
+                    <td class="dataset-details">
+                        <button id="qualityreports_start"
+                              onclick="startExecution()" >
+                              Generate Report
+                            </button>
+                    </td>
+                  </tr>
+            </tbody>
+          </table>
+  </section>
+
+<script>
+// Get and clean the package data
+let pgk = '{{ pkg.extras }}'.replaceAll("&#39;", "\"")
+  .replaceAll("u\"", "\"")
+  .replaceAll("None,", "null,")
+  .replaceAll("True,", "true,")
+  .replaceAll("False,", "false,");
+console.log(pgk);
+console.log(JSON.parse(pgk));
+
+// prepare the extra information
+var extras = JSON.parse(pgk);
+let nomad_id = "dummy";
+extras.forEach((e) => {
+  if (e.key === "Website") {
+    var splits = e.value.split("/");
+    nomad_id = splits[splits.length-2] + "/" + splits[splits.length-1];
+  }
+  });
+console.log(nomad_id);
+
+// create the request for the status
+setTimeout(function(){ $("#qualityreports_link").attr("href", getServiceURL(true)+"/"+nomad_id); }, 3000);
+
+function getServiceURL(isJekyll = false) {
+  let port = "";
+  let prefix = "reports.";
+  if (location.host === "localhost") {
+    port = ":81";
+    if (isJekyll)
+      port = ":82";
+    prefix = "";
+  }
+  return location.protocol+"//"+prefix+location.host+port;
+}
+
+/////////////////
+// creating the request for starting the execution
+function startExecution() {
+  $("#qualityreports_start").prop('disabled', true);
+
+  var xhr2 = new XMLHttpRequest();
+  xhr2.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      console.log(this.responseText);
+      //$("#qualityreports_start").prop('disabled', false);
+      alert(this.responseText);
+    }
+    else
+      console.log(this);
+  };
+  // curl http://localhost:81/hooks/Run_RDFUnit\?id\=test -v -H "Authorization: secret" -d "id=shacl"
+  xhr2.open("POST", getServiceURL()+"/hooks/Run_RDFUnit", true);
+  xhr2.setRequestHeader("Authorization", "secret");
+  xhr2.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  xhr2.send("id="+nomad_id);
+}
+
+</script>
   <div style="height: 1em;" />
 {% endblock %}
