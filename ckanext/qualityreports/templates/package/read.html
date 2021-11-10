@@ -72,7 +72,7 @@ setTimeout(function(){ $("#qualityreports_link").attr("href", getServiceURL(true
 
 function getServiceURL(isJekyll = false) {
   let port = "";
-  let prefix = "reports.";
+  let prefix = isJekyll ? "reports." : "webhook.";
   if (location.host === "localhost") {
     port = ":81";
     if (isJekyll)
@@ -105,5 +105,4 @@ function startExecution() {
 }
 
 </script>
-<div style="height: 1em;"></div>
 {% endblock %}
